@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nihal Gold & Silver — Tanch Testing</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f0e8; font-size: 13px; color: #222; }
+  .wrap { max-width: 900px; margin: 20px auto; background: #fff; border-radius: 10px; border: 1px solid #ddd; padding: 1.2rem 1.5rem; }
+
+  /* Header */
+  .hdr { text-align: center; padding: .6rem 0 .5rem; border-bottom: 2.5px solid #B8860B; margin-bottom: 1rem; }
+  .hdr h1 { font-size: 22px; font-weight: 700; color: #B8860B; letter-spacing: 1.5px; }
+  .hdr .sub { font-size: 11px; color: #888; margin-top: 3px; letter-spacing: 2px; text-transform: uppercase; }
+
+  /* Meta row */
+  .meta { display: grid; grid-template-columns: 160px 1fr 140px 140px; gap: 10px; margin-bottom: 1rem; }
+  .field label { display: block; font-size: 11px; color: #888; margin-bottom: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .field input, .field select { width: 100%; padding: 6px 9px; font-size: 13px; border: 1px solid #ddd; border-radius: 6px; background: #fafafa; color: #222; font-family: inherit; }
+  .field input[readonly] { background: #f0ebe0; color: #B8860B; font-weight: 600; cursor: default; }
+  .field input:focus, .field select:focus { border-color: #B8860B; outline: none; background: #fff; }
+
+  /* Section title */
+  .sec { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #888; margin-bottom: 5px; padding-bottom: 4px; border-bottom: 1px solid #eee; }
+
+  /* Table */
+  .tbl-wrap { overflow-x: auto; margin-bottom: .7rem; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  colgroup col:nth-child(1) { width: 32px; }
+  colgroup col:nth-child(2) { width: 120px; }
+  colgroup col:nth-child(3) { width: 90px; }
+  colgroup col:nth-child(4) { width: 80px; }
+  colgroup col:nth-child(5) { width: 90px; }
+  colgroup col:nth-child(6) { width: 80px; }
+  colgroup col:nth-child(7) { width: 85px; }
+  colgroup col:nth-child(8) { width: 32px; }
+  thead tr { background: #B8860B; }
+  thead th { padding: 7px 5px; text-align: center; font-weight: 600; font-size: 10px; letter-spacing: .5px; color: #fff; }
+  tbody tr { border-bottom: 1px solid #f0ebe0; transition: background .12s; }
+  tbody tr:nth-child(even) { background: #fdfaf4; }
+  tbody tr:hover { background: #fef8e8; }
+  tbody td { padding: 3px 3px; vertical-align: middle; }
+  tbody td input, tbody td select {
+    width: 100%; padding: 4px 5px; font-size: 12px;
+    border: 1px solid transparent; border-radius: 4px;
+    background: transparent; color: #222; text-align: center; font-family: inherit;
+  }
+  tbody td input:focus, tbody td select:focus {
+    border: 1px solid #B8860B; background: #fffdf5; outline: none;
+  }
+  td.fc { text-align: center; font-weight: 700; color: #B8860B; font-size: 13px; }
+  td.nc { text-align: center; font-size: 12px; color: #333; font-weight: 500; }
+  tfoot td { padding: 6px 5px; font-weight: 700; font-size: 12px; background: #fdf6e3; }
+  tfoot td.fl { text-align: center; color: #B8860B; }
+
+  /* Add row btn */
+  .add-btn {
+    width: 100%; padding: 7px; font-size: 12px; font-weight: 600;
+    border: 1.5px dashed #B8860B; border-radius: 6px;
+    background: transparent; color: #B8860B; cursor: pointer; margin-bottom: .8rem;
+    font-family: inherit; letter-spacing: .5px; transition: background .15s;
+  }
+  .add-btn:hover { background: #fdf6e3; }
+
+  /* Summary cards */
+  .sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: .8rem; }
+  .sc { background: #fdf6e3; border: 1px solid #e8d8a0; border-radius: 8px; padding: 9px 12px; text-align: center; }
+  .sc .sl { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 3px; font-weight: 600; }
+  .sc .sv { font-size: 17px; font-weight: 700; color: #B8860B; }
+
+  /* Gold total bar */
+  .gold-bar { background: #B8860B; border-radius: 8px; padding: 11px 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: .8rem; }
+  .gold-bar .gl { font-size: 11px; color: rgba(255,255,255,.85); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+  .gold-bar .gv { font-size: 22px; font-weight: 700; color: #fff; }
+
+  /* Payment section */
+  .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: .8rem; }
+  .pb { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 11px 14px; }
+  .pb h3 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #999; margin-bottom: 9px; }
+  .pr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .pr label { font-size: 12px; color: #666; }
+  .pr input { width: 120px; padding: 5px 7px; font-size: 12px; border: 1px solid #ddd; border-radius: 5px; background: #fff; color: #222; text-align: right; font-family: inherit; }
+  .pr input:focus { border-color: #B8860B; outline: none; }
+  .pv { font-size: 13px; font-weight: 600; color: #333; }
+  .dr { display: flex; justify-content: space-between; align-items: center; padding: 6px 0 2px; border-top: 1px solid #eee; margin-top: 5px; }
+  .dr label { font-size: 12px; font-weight: 700; color: #333; }
+  .dv { font-size: 14px; font-weight: 700; color: #C0392B; }
+  .odc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 7px; margin-bottom: 8px; }
+  .of label { font-size: 11px; color: #888; display: block; margin-bottom: 2px; font-weight: 600; }
+  .of input { width: 100%; padding: 5px 7px; font-size: 12px; border: 1px solid #ddd; border-radius: 5px; background: #fff; color: #222; font-family: inherit; }
+  .of input:focus { border-color: #B8860B; outline: none; }
+
+  /* Bottom totals */
+  .bot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: .8rem; }
+  .bcard { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 11px 16px; }
+  .bcard .bl { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: .7px; font-weight: 600; margin-bottom: 4px; }
+  .bv { font-size: 18px; font-weight: 700; }
+  .bv.gold { color: #B8860B; }
+  .bv.red { color: #C0392B; }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 10px; margin-bottom: .5rem; }
+  .print-btn { flex: 1; padding: 10px; font-size: 13px; font-weight: 700; background: #B8860B; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; letter-spacing: .5px; transition: background .15s; }
+  .print-btn:hover { background: #D4A017; }
+  .clear-btn { flex: 1; padding: 10px; font-size: 13px; font-weight: 700; background: transparent; color: #B8860B; border: 2px solid #B8860B; border-radius: 8px; cursor: pointer; font-family: inherit; letter-spacing: .5px; transition: background .15s; }
+  .clear-btn:hover { background: #fdf6e3; }
+  .del-btn { background: none; border: none; color: #bbb; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 3px; font-weight: 700; transition: color .15s; }
+  .del-btn:hover { color: #C0392B; }
+
+  .stamp { text-align: center; font-size: 10px; color: #bbb; letter-spacing: .5px; margin-top: .3rem; }
+
+  /* Print styles */
+  @media print {
+    body { background: #fff; }
+    .wrap { box-shadow: none; border: none; margin: 0; padding: 1rem; }
+    .print-btn, .clear-btn, .add-btn, .del-btn { display: none !important; }
+    .btn-row { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <h1>Nihal Gold &amp; Silver</h1>
+    <div class="sub">Tanch Testing &nbsp;&bull;&nbsp; Rough Estimate</div>
+  </div>
+
+  <div class="meta">
+    <div class="field">
+      <label>SL. No.</label>
+      <input type="text" id="slno" readonly />
+    </div>
+    <div class="field">
+      <label>Customer Name</label>
+      <input type="text" id="custname" placeholder="Enter customer name" />
+    </div>
+    <div class="field">
+      <label>Mobile No.</label>
+      <input type="tel" id="mobile" placeholder="Enter mobile number" />
+    </div>
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="edate" />
+    </div>
+  </div>
+
+  <div class="sec">Purchase Detail</div>
+  <div class="tbl-wrap">
+    <table id="pt">
+      <colgroup><col/><col/><col/><col/><col/><col/><col/><col/></colgroup>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Item Name</th>
+          <th>Weight (g)</th>
+          <th>Less (g)</th>
+          <th>Net Wt (g)</th>
+          <th>Tunch %</th>
+          <th>Fine (g)</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="pb"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" style="text-align:right;color:#888;font-size:11px;letter-spacing:.5px">TOTALS</td>
+          <td style="text-align:center" id="ft-wt">0.000</td>
+          <td></td>
+          <td style="text-align:center" id="ft-net">0.000</td>
+          <td></td>
+          <td class="fl" id="ft-fine">0.000</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <button class="add-btn" onclick="addRow()">+ Add Item Row</button>
+
+  <div class="sum-grid">
+    <div class="sc"><div class="sl">Total Weight</div><div class="sv" id="tw">0.000</div></div>
+    <div class="sc"><div class="sl">Total Net Wt</div><div class="sv" id="tn">0.000</div></div>
+    <div class="sc"><div class="sl">Total Fine (g)</div><div class="sv" id="tf">0.000</div></div>
+    <div class="sc"><div class="sl">Avg Tunch %</div><div class="sv" id="at">0.00</div></div>
+  </div>
+
+  <div class="gold-bar">
+    <span class="gl">Total Fine (Gold)</span>
+    <span class="gv" id="fd">0.000 g</span>
+  </div>
+
+  <div class="pay-grid">
+    <div class="pb">
+      <h3>Payment Detail</h3>
+      <div class="pr">
+        <label>Bhaw — Rate (₹/g)</label>
+        <input type="number" id="bhaw" placeholder="0" oninput="calcP()" />
+      </div>
+      <div class="pr">
+        <label>Fine Amount (₹)</label>
+        <span class="pv" id="fa">₹ 0</span>
+      </div>
+      <div class="pr">
+        <label>Cash Jama (₹)</label>
+        <input type="number" id="cj" placeholder="0" oninput="calcP()" />
+      </div>
+      <div class="dr">
+        <label>Dues Cash (₹)</label>
+        <span class="dv" id="dc">₹ 0</span>
+      </div>
+    </div>
+    <div class="pb">
+      <h3>ODC / Fine Adjustment</h3>
+      <div class="odc-grid">
+        <div class="of"><label>ODF</label><input type="number" id="odf" placeholder="0.000" oninput="calcP()" /></div>
+        <div class="of"><label>ODC</label><input type="number" id="odc" placeholder="0.000" oninput="calcP()" /></div>
+        <div class="of"><label>CDF</label><input type="number" id="cdf" placeholder="0.000" oninput="calcP()" /></div>
+        <div class="of"><label>CDC</label><input type="number" id="cdc" placeholder="0.000" oninput="calcP()" /></div>
+      </div>
+      <div class="pr">
+        <label>Dues Fine (g)</label>
+        <span class="pv" id="df">0.000 g</span>
+      </div>
+      <div class="dr">
+        <label>Dues Fine (₹)</label>
+        <span class="dv" id="dfa">₹ 0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bot-grid">
+    <div class="bcard">
+      <div class="bl">Dues Fine Total</div>
+      <div class="bv gold" id="dft">0.000 g</div>
+    </div>
+    <div class="bcard">
+      <div class="bl">Dues Cash Total</div>
+      <div class="bv red" id="dct">₹ 0</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="print-btn" onclick="window.print()">Print Estimate</button>
+    <button class="clear-btn" onclick="clearAll()">New Estimate</button>
+  </div>
+  <div class="stamp">Nihal Gold &amp; Silver — Tanch Testing — Rough Estimate Only</div>
+</div>
+
+<script>
+  let rows = [], rid = 0;
+  const ITEMS = ['KACHCHI','SILVER 999','GOLD 24K','GOLD 22K','GOLD 18K','GOLD 14K','ORNAMENT','COIN','BAR','OTHER'];
+
+  function genSL() {
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yy = String(d.getFullYear()).slice(-2);
+    let count = parseInt(localStorage.getItem('ngs_sl_count') || '0') + 1;
+    localStorage.setItem('ngs_sl_count', count);
+    return 'NGS-' + yy + mm + dd + '-' + String(count).padStart(3,'0');
+  }
+
+  function addRow(wt, less, tunch) {
+    const id = rid++;
+    rows.push(id);
+    const tbody = document.getElementById('pb');
+    const tr = document.createElement('tr');
+    tr.id = 'r' + id;
+    tr.innerHTML = `
+      <td style="text-align:center;font-size:11px;color:#999">${rows.length}</td>
+      <td>
+        <select id="it${id}" onchange="cr(${id})" style="width:100%;padding:4px 5px;font-size:12px;border:1px solid transparent;border-radius:4px;background:transparent;color:#222;font-family:inherit">
+          ${ITEMS.map(i => `<option${i==='KACHCHI'?' selected':''}>${i}</option>`).join('')}
+        </select>
+      </td>
+      <td><input type="number" id="wt${id}" value="${wt||''}" placeholder="0.000" step="0.001" oninput="cr(${id})" /></td>
+      <td><input type="number" id="ls${id}" value="${less||''}" placeholder="0" step="0.001" oninput="cr(${id})" /></td>
+      <td class="nc"><span id="nt${id}">0.000</span></td>
+      <td><input type="number" id="tc${id}" value="${tunch||''}" placeholder="0.00" step="0.01" min="0" max="100" oninput="cr(${id})" /></td>
+      <td class="fc"><span id="fi${id}">0.000</span></td>
+      <td><button class="del-btn" onclick="delRow(${id})" title="Delete row">x</button></td>
+    `;
+    tbody.appendChild(tr);
+    if (wt || tunch) cr(id);
+  }
+
+  function cr(id) {
+    const wt   = parseFloat(document.getElementById('wt'+id)?.value) || 0;
+    const ls   = parseFloat(document.getElementById('ls'+id)?.value) || 0;
+    const tc   = parseFloat(document.getElementById('tc'+id)?.value) || 0;
+    const net  = Math.max(0, wt - ls);
+    const fine = (net * tc) / 100;
+    const ne = document.getElementById('nt'+id);
+    const fe = document.getElementById('fi'+id);
+    if (ne) ne.textContent = net.toFixed(3);
+    if (fe) fe.textContent = fine.toFixed(3);
+    calcT();
+  }
+
+  function delRow(id) {
+    document.getElementById('r'+id)?.remove();
+    rows = rows.filter(r => r !== id);
+    rows.forEach((r, i) => {
+      const tr = document.getElementById('r'+r);
+      if (tr) tr.cells[0].textContent = i + 1;
+    });
+    calcT();
+  }
+
+  function calcT() {
+    let tw = 0, tn = 0, tf = 0, wt2 = 0;
+    rows.forEach(id => {
+      const wt   = parseFloat(document.getElementById('wt'+id)?.value) || 0;
+      const ls   = parseFloat(document.getElementById('ls'+id)?.value) || 0;
+      const tc   = parseFloat(document.getElementById('tc'+id)?.value) || 0;
+      const net  = Math.max(0, wt - ls);
+      const fine = (net * tc) / 100;
+      tw += wt; tn += net; tf += fine; wt2 += net * tc;
+    });
+    const avg = tn > 0 ? wt2 / tn : 0;
+    document.getElementById('tw').textContent      = tw.toFixed(3);
+    document.getElementById('tn').textContent      = tn.toFixed(3);
+    document.getElementById('tf').textContent      = tf.toFixed(3);
+    document.getElementById('at').textContent      = avg.toFixed(2);
+    document.getElementById('fd').textContent      = tf.toFixed(3) + ' g';
+    document.getElementById('ft-wt').textContent   = tw.toFixed(3);
+    document.getElementById('ft-net').textContent  = tn.toFixed(3);
+    document.getElementById('ft-fine').textContent = tf.toFixed(3);
+    calcP();
+  }
+
+  function calcP() {
+    const tf   = parseFloat(document.getElementById('tf').textContent) || 0;
+    const bhaw = parseFloat(document.getElementById('bhaw').value) || 0;
+    const cj   = parseFloat(document.getElementById('cj').value)   || 0;
+    const odf  = parseFloat(document.getElementById('odf').value)  || 0;
+    const odc  = parseFloat(document.getElementById('odc').value)  || 0;
+    const cdf  = parseFloat(document.getElementById('cdf').value)  || 0;
+    const cdc  = parseFloat(document.getElementById('cdc').value)  || 0;
+    const fa   = tf * bhaw;
+    const dc   = fa - cj;
+    const df   = tf + odf - odc - cdf - cdc;
+    const dfa  = df * bhaw;
+    const fmt  = n => n.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    document.getElementById('fa').textContent  = '₹ ' + fmt(fa);
+    document.getElementById('dc').textContent  = '₹ ' + fmt(dc);
+    document.getElementById('df').textContent  = df.toFixed(3) + ' g';
+    document.getElementById('dfa').textContent = '₹ ' + fmt(dfa);
+    document.getElementById('dft').textContent = df.toFixed(3) + ' g';
+    document.getElementById('dct').textContent = '₹ ' + fmt(dc);
+  }
+
+  function clearAll() {
+    if (!confirm('Start a new estimate? Current data will be cleared.')) return;
+    rows.forEach(id => document.getElementById('r'+id)?.remove());
+    rows = []; rid = 0;
+    document.getElementById('custname').value = '';
+    document.getElementById('mobile').value   = '';
+    document.getElementById('bhaw').value     = '';
+    document.getElementById('cj').value       = '';
+    document.getElementById('odf').value      = '';
+    document.getElementById('odc').value      = '';
+    document.getElementById('cdf').value      = '';
+    document.getElementById('cdc').value      = '';
+    document.getElementById('slno').value     = genSL();
+    document.getElementById('edate').value    = new Date().toISOString().split('T')[0];
+    calcT();
+  }
+
+  /* Init */
+  document.getElementById('edate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('slno').value  = genSL();
+
+  /* Start with 3 blank rows ready to fill */
+  addRow(); addRow(); addRow();
+</script>
+</body>
+</html>
